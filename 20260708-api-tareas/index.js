@@ -84,7 +84,7 @@ app.get("/api/tareas", (req, res) => {
 app.get("/api/tareas/:id", (req, res) => {
     //req.params.id llega como texto.
     //parseInt() lo convierte a número
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id); 
     // Buscamos la tarea cuyo id coincida.
     const tarea = tareas.find(t => t.id === id);
     // Si no existe
@@ -97,6 +97,94 @@ app.get("/api/tareas/:id", (req, res) => {
     // Si existe devolvemos la tarea.
     res.status(200).json(tarea);
 });
+
+//=============================================
+//POST - CREAR UNA NUEVA TAREA
+//=============================================
+//Ruta:
+//POST /api/tareas
+//Cliente enviará un JSON como:
+//{ "titulo": "Estudiar Express " }
+app.post("/api/tareas", (req, res) =>{
+    // Extraemos el título enviado por el cliente
+    const { titulo } = req.body;
+    // Validamos que el título exista
+    if(!titulo) {
+        //Código HTTP = Solicitud incorrecta 
+        return res.status(400).json({
+            mensaje: "Debe indicar el título de la tarea"
+        });
+    }
+    //Creamos un nuevo objeto
+    const nuevaTarea = {
+        //Generamos un id automático
+        id: tareas.length + 1,
+        //Guardamos el título recibido.
+        titulo,
+        // Toda tarea nueva comienza incompleta
+        completada: false
+    };
+    // Agregamos la nueva tarea al arreglo
+    tareas.push(nuevaTarea);
+    // Respondemos indicando que fue creada
+    res.status(201).json({
+        mensaje: "Tarea creada correctamente",
+        tarea: nuevaTarea
+    }); 
+});
+
+//=============================================
+// PUT - ACTUALIZAR UNA TAREA
+//============================================
+//Ruta:
+//PUT /api/tareas/1
+// Permite modificar una tarea existente
+app.put("/api/tareas/:id", (req, res) => {
+    // Obtenemos el id enviado en la URL
+    const id = parseInt(req.params.id);
+    //Buscamos la tarea.
+    const tarea = tareas.find(t => t.id === id);
+    // Si no existe...
+    if(!tarea) {
+        return res.status(404).json({
+            mensaje: "La tarea no existe"
+        });
+    }
+    // Obtenemos los datos enviados
+    const { titulo, completada} = req.body;
+    // Si el cliente envía un nuevo título,
+    //actualizamos únicamente ese campo.
+    //!== "distinto de" undefined significa que una variable
+    // o propiedad no existe o no tiene valor
+    if (titulo !== undefined) {
+        tarea.titulo = titulo;
+    }
+    //Si el cliente envía el estado,
+    // actualizamos únicamente ese campo.
+    if (completada !== undefined) {
+        tarea.completada = completada
+    }
+    // Respondemos indicando que todo salió bien
+    res.status(200).json({
+        mensaje: "Tarea actualizada",
+        tarea
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -112,3 +200,6 @@ app.listen(PORT, () => {
     //mostramos un mensaje en la consola.
     console.log(`🎉Servidor ejecutándose en http://localhost:${PORT}`);
 });
+
+
+
