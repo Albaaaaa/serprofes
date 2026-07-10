@@ -62,6 +62,7 @@ app.get("/", (req, res)=> {
 })
 
 
+//=====================================
 // GET - OBTENER TODAS LAS TAREAS
 //=====================================
 // Ruta:
@@ -74,6 +75,35 @@ app.get("/api/tareas", (req, res) => {
     res.status(200).json(tareas);
 });
 
+//====================================
+//GET - OBTENER UNA TAREA POR SU ID
+//====================================
+//Ruta:
+//GET /api/tareas/2
+//":id" significa que el valor es dinámico
+app.get("/api/tareas/:id", (req, res) => {
+    //req.params.id llega como texto.
+    //parseInt() lo convierte a número
+    const id = parseInt(req.params.id);
+    // Buscamos la tarea cuyo id coincida.
+    const tarea = tareas.find(t => t.id === id);
+    // Si no existe
+    if(!tarea) {
+        // Código HTTP 404 = No encontrado
+        return res.status(404).json ({
+            mensaje: "La tarea no existe"
+        });
+    }
+    // Si existe devolvemos la tarea.
+    res.status(200).json(tarea);
+});
+
+
+
+
+
+
+
 
 
 
@@ -82,5 +112,3 @@ app.listen(PORT, () => {
     //mostramos un mensaje en la consola.
     console.log(`🎉Servidor ejecutándose en http://localhost:${PORT}`);
 });
-
-
