@@ -20,8 +20,18 @@ app.use(express.json());// Traduce el texto entrante a formato JSON
 //4. NUESTRA BASE DE DATOS
 //===============================================
 let peliculas = [
-    {id:1, titulo: "Matrix", director: "Lana Wachowski"},
-    {id:2, titulo: "Interstellar", director: "Christopher Nolan"}
+    {id:1, titulo: "Kung Fu panda", director: "Angelina Jolie"},
+    {id:2, titulo: "serie de Naruto", director: "Naruto"},
+    {id:3, titulo: "Cuarto Milenio", director: "La Cuatro"},
+    {id:4, titulo: "Tarzán", director: "Disney"},
+    {id:5, titulo: "Pocahontas", director: "Disney"},
+    {id:6, titulo: "Kung Fu Panda 2", director: "Angelina Jolie"},
+    {id:7, titulo: "Maléfica", director: "Angelina Jolie"},
+    {id:8, titulo: "Maléfica 2", director: "Angelina Jolie"},
+    {id:9, titulo: "Kung Fu Panda 3", director: "Angelina Jolie"},
+    {id:10, titulo: "Kung Fu Panda 4", director: "Angelina Jolie"},
+    {id:11, titulo: "Buscando a Nemo", director: "Disney"},
+    {id:12, titulo: "La Sirenita", director: "Disney"},
 ];
 
 //================================================
