@@ -33,7 +33,7 @@ async function obtenerPortada(titulo) {
     }
 
     const url = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${encodeURIComponent(titulo)}`;
-    console.log(`[TMDb] Buscando portada para: "${titulo}"`);
+    console.log(`[TMDb] Buscando portada para: "{titulo}"`);
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
@@ -42,16 +42,63 @@ async function obtenerPortada(titulo) {
         const respuesta = await fetch(url, { signal: controller.signal });
         clearTimeout(timeoutId);
 
-        console.log(`[TMDb] Status para "${titulo}": ${respuesta.status}`);
+        console.log(`[TMDb] Status para "${titulo}": // Actualizar una película existente (PUT)
+app.put("/api/peliculas/:id", async (req, res) => {
+
+    const id = parseInt(req.params.id);
+
+    const titulo = req.body.titulo?.trim();
+    const director = req.body.director?.trim();
+
+    // No permitir campos vacíos
+    if (!titulo || !director) {
+        return res.status(400).json({
+            error: "El título y el director son obligatorios."
+        });
+    }
+
+    const pelicula = peliculas.find(p => p.id === id);
+
+    if (!pelicula) {
+        return res.status(404).json({
+            error: "Película no encontrada."
+        });
+    }
+
+    // No permitir duplicados (excepto la propia película)
+    const duplicada = peliculas.find(
+        p =>
+            p.id !== id &&
+            p.titulo.toLowerCase() === titulo.toLowerCase()
+    );
+
+    if (duplicada) {
+        return res.status(409).json({
+            error: "Ya existe otra película con ese título."
+        });
+    }
+
+    let nuevaPortada = pelicula.portada;
+
+    if (pelicula.titulo !== titulo) {
+        nuevaPortada = await obtenerPortada(titulo);
+    }
+
+    pelicula.titulo = titulo;
+    pelicula.director = director;
+    pelicula.portada = nuevaPortada;
+
+    res.json(pelicula);
+});{respuesta.status}`);
 
         if (!respuesta.ok) {
             const errorText = await respuesta.text();
-            console.error(`[TMDb] Error para "${titulo}": ${respuesta.status} ${errorText}`);
+            console.error(`[TMDb] Error para "${titulo}": {respuesta.status} ${errorText}`);
             return PORTADA_GENERICA;
         }
 
         const datos = await respuesta.json();
-        console.log(`[TMDb] Resultados para "${titulo}": ${datos.results ? datos.results.length : 0}`);
+        console.log(`[TMDb] Resultados para "{titulo}": {datos.results ? datos.results.length : 0}`);
 
         if (!datos.results || datos.results.length === 0) {
             console.warn(`[TMDb] No se encontraron resultados para "${titulo}"`);
@@ -78,6 +125,54 @@ async function obtenerPortada(titulo) {
     }
 }
 
+// Actualizar una película existente (PUT)
+app.put("/api/peliculas/:id", async (req, res) => {
+
+    const id = parseInt(req.params.id);
+
+    const titulo = req.body.titulo?.trim();
+    const director = req.body.director?.trim();
+
+    // No permitir campos vacíos
+    if (!titulo || !director) {
+        return res.status(400).json({
+            error: "El título y el director son obligatorios."
+        });
+    }
+
+    const pelicula = peliculas.find(p => p.id === id);
+
+    if (!pelicula) {
+        return res.status(404).json({
+            error: "Película no encontrada."
+        });
+    }
+
+    // No permitir duplicados (excepto la propia película)
+    const duplicada = peliculas.find(
+        p =>
+            p.id !== id &&
+            p.titulo.toLowerCase() === titulo.toLowerCase()
+    );
+
+    if (duplicada) {
+        return res.status(409).json({
+            error: "Ya existe otra película con ese título."
+        });
+    }
+
+    let nuevaPortada = pelicula.portada;
+
+    if (pelicula.titulo !== titulo) {
+        nuevaPortada = await obtenerPortada(titulo);
+    }
+
+    pelicula.titulo = titulo;
+    pelicula.director = director;
+    pelicula.portada = nuevaPortada;
+
+    res.json(pelicula);
+});
 
 //===============================================
 //4. NUESTRA BASE DE DATOS
@@ -95,12 +190,27 @@ app.get("/api/peliculas", (req,res)=>{
     res.json(peliculas);
 });
 
-//Añadir una película nueva (POST)
+// Añadir una película nueva (POST)
 app.post("/api/peliculas", async (req, res) => {
-    const { titulo, director } = req.body;
+    const titulo = req.body.titulo?.trim();
+    const director = req.body.director?.trim();
 
+    // No permitir campos vacíos
     if (!titulo || !director) {
-        return res.status(400).json({ error: "Faltan datos obligatorios" });
+        return res.status(400).json({
+            error: "El título y el director son obligatorios."
+        });
+    }
+
+    // No permitir películas duplicadas
+    const peliculaExistente = peliculas.find(
+        p => p.titulo.toLowerCase() === titulo.toLowerCase()
+    );
+
+    if (peliculaExistente) {
+        return res.status(409).json({
+            error: "Esa película ya existe en el catálogo."
+        });
     }
 
     const portada = await obtenerPortada(titulo);
@@ -113,38 +223,9 @@ app.post("/api/peliculas", async (req, res) => {
     };
 
     peliculas.push(nuevaPelicula);
+
     res.status(201).json(nuevaPelicula);
 });
-
-
-//Actualizar una película existente (PUT)
-app.put("/api/peliculas/:id", async (req, res) => {
-    const id = parseInt(req.params.id);
-    const { titulo, director } = req.body;
-
-    if (!titulo || !director) {
-        return res.status(400).json({ error: "Faltan datos obligatorios" });
-    }
-
-    const pelicula = peliculas.find(p => p.id === id);
-
-    if (!pelicula) {
-        return res.status(404).json({ error: "Película no encontrada" });
-    }
-
-    // Si el título ha cambiado, buscamos una nueva portada
-    let nuevaPortada = pelicula.portada;
-    if (pelicula.titulo !== titulo) {
-        nuevaPortada = await obtenerPortada(titulo);
-    }
-
-    pelicula.titulo = titulo;
-    pelicula.director = director;
-    pelicula.portada = nuevaPortada;
-
-    res.json(pelicula);
-});
-
 
 //Eliminar una película (DELETE)
 
