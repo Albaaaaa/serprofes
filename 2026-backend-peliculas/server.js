@@ -125,6 +125,14 @@ app.put("/api/peliculas/:id", async (req, res) => {
     }
 }
 
+// No permitir títulos formados solo por números
+if (/^\d+$/.test(titulo)) {
+    return res.status(400).json({
+        error: "El título de la película no puede contener solo números."
+    });
+}
+
+
 // Actualizar una película existente (PUT)
 app.put("/api/peliculas/:id", async (req, res) => {
 
@@ -173,6 +181,13 @@ app.put("/api/peliculas/:id", async (req, res) => {
 
     res.json(pelicula);
 });
+
+// No permitir títulos formados solo por números
+if (/^\d+$/.test(titulo)) {
+    return res.status(400).json({
+        error: "El título de la película no puede contener solo números."
+    });
+}
 
 //===============================================
 //4. NUESTRA BASE DE DATOS
