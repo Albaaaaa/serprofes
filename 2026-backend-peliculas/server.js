@@ -2,7 +2,7 @@
 //1. IMPORTACIONES
 //==================================
 const express = require("express");
-const cors = require("cors");// Importamos nuestro guardián de seguridad
+const cors = require("cors"); // Importamos nuestro guardián de seguridad
 const path = require('path');
 require('dotenv').config(); // llamamos a 'dotenv' que maneja el archivo .env con la clave api en local sin subirla a repo en github
 
@@ -16,8 +16,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 //3. MIDDLEWARES (CONFIGURACIÓN GLOBAL)
 //=============================================
 //REGLA DE ORO: ¡CORS SIEMPRE ANTES DE LAS RUTAS!
-app.use(cors());// Da permiso a React para entrar sin que el navegador lo bloquee
-app.use(express.json());// Traduce el texto entrante a formato JSON
+app.use(cors()); // Da permiso a React para entrar sin que el navegador lo bloquee
+app.use(express.json()); // Traduce el texto entrante a formato JSON
 
 // 3 y medio: función para obtener portadas
 const fetch = (...args) =>
@@ -33,7 +33,7 @@ async function obtenerPortada(titulo) {
     }
 
     const url = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${encodeURIComponent(titulo)}`;
-    console.log(`[TMDb] Buscando portada para: "{titulo}"`);
+    console.log(`[TMDb] Buscando portada para: "${titulo}"`);
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
@@ -42,63 +42,16 @@ async function obtenerPortada(titulo) {
         const respuesta = await fetch(url, { signal: controller.signal });
         clearTimeout(timeoutId);
 
-        console.log(`[TMDb] Status para "${titulo}": // Actualizar una película existente (PUT)
-app.put("/api/peliculas/:id", async (req, res) => {
-
-    const id = parseInt(req.params.id);
-
-    const titulo = req.body.titulo?.trim();
-    const director = req.body.director?.trim();
-
-    // No permitir campos vacíos
-    if (!titulo || !director) {
-        return res.status(400).json({
-            error: "El título y el director son obligatorios."
-        });
-    }
-
-    const pelicula = peliculas.find(p => p.id === id);
-
-    if (!pelicula) {
-        return res.status(404).json({
-            error: "Película no encontrada."
-        });
-    }
-
-    // No permitir duplicados (excepto la propia película)
-    const duplicada = peliculas.find(
-        p =>
-            p.id !== id &&
-            p.titulo.toLowerCase() === titulo.toLowerCase()
-    );
-
-    if (duplicada) {
-        return res.status(409).json({
-            error: "Ya existe otra película con ese título."
-        });
-    }
-
-    let nuevaPortada = pelicula.portada;
-
-    if (pelicula.titulo !== titulo) {
-        nuevaPortada = await obtenerPortada(titulo);
-    }
-
-    pelicula.titulo = titulo;
-    pelicula.director = director;
-    pelicula.portada = nuevaPortada;
-
-    res.json(pelicula);
-});{respuesta.status}`);
+        console.log(`[TMDb] Status para "${titulo}": ${respuesta.status}`);
 
         if (!respuesta.ok) {
             const errorText = await respuesta.text();
-            console.error(`[TMDb] Error para "${titulo}": {respuesta.status} ${errorText}`);
+            console.error(`[TMDb] Error para "${titulo}": ${respuesta.status} ${errorText}`);
             return PORTADA_GENERICA;
         }
 
         const datos = await respuesta.json();
-        console.log(`[TMDb] Resultados para "{titulo}": {datos.results ? datos.results.length : 0}`);
+        console.log(`[TMDb] Resultados para "${titulo}": ${datos.results ? datos.results.length : 0}`);
 
         if (!datos.results || datos.results.length === 0) {
             console.warn(`[TMDb] No se encontraron resultados para "${titulo}"`);
@@ -125,83 +78,19 @@ app.put("/api/peliculas/:id", async (req, res) => {
     }
 }
 
-// No permitir títulos formados solo por números
-if (/^\d+$/.test(titulo)) {
-    return res.status(400).json({
-        error: "El título de la película no puede contener solo números."
-    });
-}
-
-
-// Actualizar una película existente (PUT)
-app.put("/api/peliculas/:id", async (req, res) => {
-
-    const id = parseInt(req.params.id);
-
-    const titulo = req.body.titulo?.trim();
-    const director = req.body.director?.trim();
-
-    // No permitir campos vacíos
-    if (!titulo || !director) {
-        return res.status(400).json({
-            error: "El título y el director son obligatorios."
-        });
-    }
-
-    const pelicula = peliculas.find(p => p.id === id);
-
-    if (!pelicula) {
-        return res.status(404).json({
-            error: "Película no encontrada."
-        });
-    }
-
-    // No permitir duplicados (excepto la propia película)
-    const duplicada = peliculas.find(
-        p =>
-            p.id !== id &&
-            p.titulo.toLowerCase() === titulo.toLowerCase()
-    );
-
-    if (duplicada) {
-        return res.status(409).json({
-            error: "Ya existe otra película con ese título."
-        });
-    }
-
-    let nuevaPortada = pelicula.portada;
-
-    if (pelicula.titulo !== titulo) {
-        nuevaPortada = await obtenerPortada(titulo);
-    }
-
-    pelicula.titulo = titulo;
-    pelicula.director = director;
-    pelicula.portada = nuevaPortada;
-
-    res.json(pelicula);
-});
-
-// No permitir títulos formados solo por números
-if (/^\d+$/.test(titulo)) {
-    return res.status(400).json({
-        error: "El título de la película no puede contener solo números."
-    });
-}
-
 //===============================================
 //4. NUESTRA BASE DE DATOS
 //===============================================
 let peliculas = [
-    {id:1, titulo: "Matrix", director: "Lana Wachowski"},
-    {id:2, titulo: "Interstellar", director: "Christopher Nolan"}
+    { id: 1, titulo: "Matrix", director: "Lana Wachowski" },
+    { id: 2, titulo: "Interstellar", director: "Christopher Nolan" }
 ];
 
 //================================================
 //5. RUTAS DE LA API (CRUD)
 //================================================
 // Leer el catálogo completo (GET)
-app.get("/api/peliculas", (req,res)=>{
+app.get("/api/peliculas", (req, res) => {
     res.json(peliculas);
 });
 
@@ -242,24 +131,66 @@ app.post("/api/peliculas", async (req, res) => {
     res.status(201).json(nuevaPelicula);
 });
 
-//Eliminar una película (DELETE)
-
-app.delete("/api/peliculas/:id", (req,res) => {
+// Actualizar una película existente (PUT)
+app.put("/api/peliculas/:id", async (req, res) => {
     const id = parseInt(req.params.id);
-    const index = peliculas.findIndex(p  => p.id === id);
 
-    if(index !== -1){
-        peliculas.splice(index,1);
-        res.json({mensaje: "Pelicula eliminada del catálogo"});
-    }else {
-        res.status(404).json({ error: "Película no encontrada"});
+    const titulo = req.body.titulo?.trim();
+    const director = req.body.director?.trim();
+
+    // No permitir campos vacíos
+    if (!titulo || !director) {
+        return res.status(400).json({
+            error: "El título y el director son obligatorios."
+        });
     }
+
+    const pelicula = peliculas.find(p => p.id === id);
+
+    if (!pelicula) {
+        return res.status(404).json({
+            error: "Película no encontrada."
+        });
+    }
+
+    // No permitir duplicados (excepto la propia película)
+    const duplicada = peliculas.find(
+        p =>
+            p.id !== id &&
+            p.titulo.toLowerCase() === titulo.toLowerCase()
+    );
+
+    if (duplicada) {
+        return res.status(409).json({
+            error: "Ya existe otra película con ese título."
+        });
+    }
+
+    let nuevaPortada = pelicula.portada;
+
+    if (pelicula.titulo !== titulo) {
+        nuevaPortada = await obtenerPortada(titulo);
+    }
+
+    pelicula.titulo = titulo;
+    pelicula.director = director;
+    pelicula.portada = nuevaPortada;
+
+    res.json(pelicula);
 });
 
+// Eliminar una película (DELETE)
+app.delete("/api/peliculas/:id", (req, res) => {
+    const id = parseInt(req.params.id);
+    const index = peliculas.findIndex(p => p.id === id);
 
-
-
-
+    if (index !== -1) {
+        peliculas.splice(index, 1);
+        res.json({ mensaje: "Pelicula eliminada del catálogo" });
+    } else {
+        res.status(404).json({ error: "Película no encontrada" });
+    }
+});
 
 async function completarPortadasIniciales() {
     for (let pelicula of peliculas) {
