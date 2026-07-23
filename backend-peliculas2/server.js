@@ -13,8 +13,11 @@ let peliculas = [
 ]; 
 // DECLARACIÓN DE ENTRADA AL SERVIDOR 
 app.listen(PORT, () => { 
-console.log(`\u2611 Servidor de películas operativo con éxito en 
-http://localhost:\${PORT}`); 
+app.listen(PORT, () => {
+  console.log(`☑ Servidor de películas operativo con éxito en http://localhost:${PORT}`);
+});app.listen(PORT, () => {
+  console.log(`☑ Servidor de películas operativo con éxito en http://localhost:${PORT}`);
+});
 });
 app.get("/api/peliculas", (req, res) => { 
 res.status(200).json(peliculas); 
