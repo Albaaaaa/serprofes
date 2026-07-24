@@ -1,0 +1,30 @@
+{
+  "name": "biblioteca-escolar-",
+  "version": "1.0.0",
+  "description": "Catálogo de películas mejorado con protecciones - Backend + Frontend",
+  "private": true,
+  "scripts": {
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "dev": "npx concurrently --kill-others --names \"BACKEND,FRONTEND\" -c \"blue,magenta\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && node server.js",
+    "dev:frontend": "cd frontend && npx vite",
+    "build": "cd frontend && npm run build",
+    "start": "cd backend && node server.js"
+  },
+  "keywords": [
+    "movies",
+    "catalog",
+    "react",
+    "express"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  }
+}
