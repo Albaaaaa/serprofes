@@ -1,0 +1,13 @@
+<alumnos>
+    <alumno>
+        <nombre>Alba</nombre>
+        <edad>29</edad>
+        <vida>true</vida>
+    </alumno>
+    <alumno>
+        <nombre>María</nombre>
+        <edad>29</edad>
+        <vida>true</vida>
+        <ciudad>Getafe</ciudad>
+    </alumno>
+</alumnos>
